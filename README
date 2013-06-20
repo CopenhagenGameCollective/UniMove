@@ -24,10 +24,14 @@ Thomas has updated his library so it works with Windows. However, connecting the
 Features include
 -------------------------
 
- * Set the RGB LED color and rumble intensity (via USB and Bluetooth)
- * Read the status of the digital buttons (via Bluetooth only)
- * Read the status of the analog trigger (via Bluetooth only)
- * Read sensor values of the internal sensors (via Bluetooth only)
+ * Read the status of the digital buttons (Bluetooth only)
+ * Read the status of the analog trigger (Bluetooth only)
+ * Read values for the internal sensors (Bluetooth only):
+    * accelorometer
+    * gyroscope
+    * magnetometer
+    * temperature
+    * battery level
 
 
 Installation instructions
