@@ -143,8 +143,6 @@ public class UniMoveController : MonoBehaviour
 	private static float MIN_UPDATE_RATE = 0.02f; // You probably don't want to update the controller more frequently than every 20 milliseconds
 	
 	private float trigger = 0f;
-	private uint pressedButtons = 0;
-	private uint releasedButtons = 0;
 	private uint currentButtons = 0;
 	private uint prevButtons = 0;
 	
@@ -213,6 +211,10 @@ public class UniMoveController : MonoBehaviour
 	{	
 		if (disconnected) return;
 		
+		// we want to update the previous buttons outside the update restriction so,
+		// we only get one button event pr. unity update frame
+		prevButtons = currentButtons;
+		
 		timeElapsed += Time.deltaTime;
 		
 		
@@ -223,8 +225,7 @@ public class UniMoveController : MonoBehaviour
 		if (timeElapsed < updateRate) return;	
 		else timeElapsed = 0.0f;
 		
-		uint buttons = 0,  pressed = 0,  released = 0, pressedButtons = 0, relaesedButtons = 0;
-		prevButtons = currentButtons;
+		uint buttons = 0;
 		
 		// NOTE! There is potentially data waiting in queue. 
 		// We need to poll *all* of it by calling psmove_poll() until the queue is empty. Otherwise, data might begin to build up.
@@ -234,12 +235,10 @@ public class UniMoveController : MonoBehaviour
 			buttons = buttons | psmove_get_buttons(handle);
 			
 			// The events are not really working from the PS Move Api. So we do our own with the prevButtons
-			psmove_get_button_events(handle, ref pressed, ref released);
-			
-			pressedButtons |= pressed;
-			releasedButtons |= released;
+			//psmove_get_button_events(handle, ref pressed, ref released);
 		}
 		currentButtons = buttons;
+
 		
 		// For acceleration, gyroscope, and magnetometer values, we look at only the last value in the queue.
 		// We could in theory average all the acceleration (and other) values in the queue for a "smoothing" effect, but we've chosen not to.
@@ -276,8 +275,7 @@ public class UniMoveController : MonoBehaviour
 	public bool GetButtonDown(PSMoveButton b)
     {
 		if (disconnected) return false;
-		
-    	return ((prevButtons & (uint)b) == 0) &&  ((currentButtons & (uint)b) != 0);
+    	return ((prevButtons & (uint)b) == 0) && ((currentButtons & (uint)b) != 0);
     }
 
 	/// <summary>

@@ -84,21 +84,6 @@ public class UniMoveTest : MonoBehaviour
 		}
 	}
 
-	void HandleButtonPressed(object sender, UniMoveButtonEventArgs e)
-	{
-		if (e.button == PSMoveButton.Circle) Debug.Log("Circle pressed!");
-	}
-	
-	void HandleButtonReleased(object sender, UniMoveButtonEventArgs e)
-	{
-		if (e.button == PSMoveButton.Circle) Debug.Log("Circle released!");
-	}
-	
-	void HandleControllerDisconnected(object sender, EventArgs e)
-	{
-		// We'd probably want to remove/destroy the controller here
-		Debug.Log("Controller disconnected!");
-	}
 	
 	void Update() 
 	{
@@ -106,11 +91,19 @@ public class UniMoveTest : MonoBehaviour
 		foreach (UniMoveController move in moves) 
 		{
 			// Instead of this somewhat kludge-y check, we'd probably want to remove/destroy
-			// the now-defunct controller in the disconnected event handler above.
+			// the now-defunct controller in the disconnected event handler below.
 			if (move.Disconnected) continue;
 			
+			// Button events. Works like Unity's Input.GetButton
+			if (move.GetButtonDown(PSMoveButton.Circle)){
+				Debug.Log("Circle Down");
+			}
+			if (move.GetButtonUp(PSMoveButton.Circle)){
+				Debug.Log("Circle UP");
+			}
+			
 			// Change the colors of the LEDs based on which button has just been pressed:
-			if (move.GetButtonUp(PSMoveButton.Circle)) 			move.SetLED(Color.cyan);
+			if (move.GetButtonDown(PSMoveButton.Circle)) 		move.SetLED(Color.cyan);
 			else if(move.GetButtonDown(PSMoveButton.Cross)) 	move.SetLED(Color.red);
 			else if(move.GetButtonDown(PSMoveButton.Square)) 	move.SetLED(Color.yellow);
 			else if(move.GetButtonDown(PSMoveButton.Triangle)) 	move.SetLED(Color.magenta);
@@ -119,6 +112,11 @@ public class UniMoveTest : MonoBehaviour
 			// Set the rumble based on how much the trigger is down
 			move.SetRumble(move.Trigger);
 		}
+	}
+	
+	void HandleControllerDisconnected (object sender, EventArgs e)
+	{
+		// TODO: Remove this disconnected controller from the list and maybe give an update to the player
 	}
 	
 	void OnGUI() 
