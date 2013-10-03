@@ -409,6 +409,14 @@ public class UniMoveController : MonoBehaviour
 	{
 		get { return temperature; }
 	}
+
+	/// <summary>
+	/// The serial number of the controller (Bluetooth address)
+	/// </summary>
+	public string Serial
+	{
+		get { return psmove_get_serial(handle); }
+	}
 	
 	/* TODO: These two values still need to be implemented, so we don't expose them publicly... yet!
 
@@ -558,6 +566,9 @@ public class UniMoveController : MonoBehaviour
 	
 	[DllImport("libpsmoveapi")]
 	private static extern void psmove_disconnect(IntPtr move);
+
+	[DllImport("libpsmoveapi")]
+	private static extern string psmove_get_serial(IntPtr move);
 	
 	#endregion
 }
