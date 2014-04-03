@@ -152,6 +152,9 @@ public class UniMoveController : MonoBehaviour
 	private Vector3 rawGyro = Vector3.zero;
 	private Vector3 gyro = Vector3.zero;
 	
+	//Orientation
+	private Quaternion orientation;
+	
 	// TODO: These values still need to be implemented, so we don't expose them publicly
 	private PSMove_Battery_Level battery = PSMove_Battery_Level.Batt_20Percent;
 	private float temperature = 0f;
@@ -180,6 +183,21 @@ public class UniMoveController : MonoBehaviour
 		// you need to remove manually from the OSX Bluetooth Control Panel, then re-connect.
 		return (psmove_update_leds(handle) != 0);
 	}
+	
+	//Orientation
+	//Don't forget to calibrate the magnetometer beforehand with the API's tool
+	//Call this and ResetOrientation before you use access orientation, or it won't work
+	public void InitOrientation(){
+		if(!HasOrientation()){
+			if(!HasCalibration()){
+				Debug.Log("Move is not calibrated, cannot use orientation");
+			}
+			else{
+				Debug.Log("Move does not have orientation set up, enabling...");
+				EnableOrientation();
+			}
+		}
+        }
 	
 	/// <summary>
     /// Static function that returns the number of *all* controller connections.
@@ -394,6 +412,29 @@ public class UniMoveController : MonoBehaviour
 		get { return magnet; }
 	}
 	
+	//Orientation
+	
+	//Returns a quaternion (rotation)
+	public Quaternion Orientation{
+		get{return orientation;}
+	}
+	//Returns true if Move is calibrated
+	public bool HasCalibration(){
+		return psmove_has_calibration(handle)==1;
+	}
+	//Returns true if Move can be used for orientation
+	public bool HasOrientation(){
+		return psmove_has_orientation(handle)==1;
+	}
+	//Enables orientation
+	public void EnableOrientation(){
+		psmove_enable_orientation(handle,1);
+	}
+	//Resets orientation to identity quaternion, must be called at least once before orientation will work
+	public void ResetOrientation(){
+		psmove_reset_orientation(handle);
+	}
+	
 	/// <summary>
     /// The battery level
     /// </summary>
@@ -484,6 +525,15 @@ public class UniMoveController : MonoBehaviour
 		magnet.y = y;
 		magnet.z = z;
 		
+		//Orientation
+		float q0 = 0.0f, q1 = 0.0f, q2 = 0.0f, q3 = 0.0f;
+		psmove_get_orientation(handle, ref q0, ref q1, ref q2, ref q3);
+		//Quaternion w has to be moved to front (swapped) for Unity
+		orientation.w=q0;
+		orientation.x=q1;
+		orientation.y=q2;
+		orientation.z=q3;
+		
 		battery = psmove_get_battery(handle);
 		
 		temperature = psmove_get_temperature(handle);
@@ -569,6 +619,19 @@ public class UniMoveController : MonoBehaviour
 
 	[DllImport("libpsmoveapi")]
 	private static extern string psmove_get_serial(IntPtr move);
+	
+	//Orientation
+	[DllImport("libpsmoveapi")]
+	private static extern int psmove_has_orientation(IntPtr move);
+	
+	[DllImport("libpsmoveapi")]
+	private static extern void psmove_enable_orientation(IntPtr move, int enabled);
+	
+	[DllImport("libpsmoveapi")]
+	private static extern void psmove_reset_orientation(IntPtr move);
+	
+	[DllImport("libpsmoveapi")]
+	private static extern void psmove_get_orientation(IntPtr move, ref float q0, ref float q1, ref float q2, ref float q3);
 	
 	#endregion
 }
