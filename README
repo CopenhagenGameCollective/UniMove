@@ -24,14 +24,21 @@ Thomas has updated his library so it works with Windows. However, connecting the
 Features include
 -------------------------
 
- * Read the status of the digital buttons (Bluetooth only)
+ * Setting LEDs and rumble (USB and Bluetooth)
  * Read the status of the analog trigger (Bluetooth only)
- * Read values for the internal sensors (Bluetooth only):
+ * Read values for the inertial sensors and buttons (Bluetooth only):
     * accelorometer
     * gyroscope
     * magnetometer
     * temperature
     * battery level
+* High level orientation calculation
+	
+Work remaining
+-------------------------
+ * Include support for periphials like the navigation controller and sharp shooter
+ * make a utility tool for visual representation of sensor values
+ * add tracking support
 
 
 Installation instructions
@@ -44,5 +51,5 @@ Installation instructions
 Viola! The assets (code, scene, plugin) should now be extracted and visible in your Project window. Double click the “Test Scene” scene to load it.  You should now be able to press the Play button to run the test program!
 
 
-This README file was last updated on 2013-06-19 by pjarnfelt
+This README file was last updated on 2014-08-09 by pjarnfelt
 
