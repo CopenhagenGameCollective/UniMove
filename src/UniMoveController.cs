@@ -530,9 +530,9 @@ public class UniMoveController : MonoBehaviour
         psmove_get_orientation(handle, ref q0, ref q1, ref q2, ref q3);
         //Quaternion w has to be moved to front (swapped) for Unity
         orientation.w=q0;
-        orientation.x=q1;
-        orientation.y=q2;
-        orientation.z=q3;
+        orientation.x=-q1;
+        orientation.y=q3;
+        orientation.z=q2;
 
         battery = psmove_get_battery(handle);
 
